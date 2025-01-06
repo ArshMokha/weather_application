@@ -22,7 +22,7 @@ async function fetchPOST(url, formData) {
   }
 }
 
-function SearchBar() {
+function SearchBar({setWeatherData}) {
   const [city, setCity] = useState("");
   const [locations, setLocations] = useState([]);
 
@@ -47,7 +47,7 @@ function SearchBar() {
       }
 
       const response = await fetchPOST("http://localhost:8080/curr_weather", obj);
-      console.log(response);
+      setWeatherData(response);
     }
   }
 

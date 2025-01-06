@@ -32,11 +32,8 @@ app.post("/geolocation", async (req, res) => {
 app.post("/curr_weather", async (req, res) => {
   const {lat, lon} = req.body;
 
-  console.log(lat)
-  console.log(lon)
-
   try {
-    const apiURL = `${process.env.CURR_WEATHER_API_URL}?lat=${lat}&lon=${lon}&appid=${process.env.WEATHER_API_KEY}`;
+    const apiURL = `${process.env.CURR_WEATHER_API_URL}?lat=${lat}&lon=${lon}&units=metric&appid=${process.env.WEATHER_API_KEY}`;
     const apiResponse = await axios.get(apiURL);
 
     if (!apiResponse.data) {
