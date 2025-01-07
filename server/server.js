@@ -1,5 +1,6 @@
 const express = require ("express");
 const axios = require ("axios");
+const mongoose = require ("mongoose");
 const cors = require ("cors");
 require('dotenv').config();
 
@@ -11,6 +12,8 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded());
+
+mongoose.connect("mongodb://localhost:27017/weatherapp");
 
 app.post("/geolocation", async (req, res) => {
   const { city } = req.body;
@@ -45,20 +48,35 @@ app.post("/curr_weather", async (req, res) => {
     res.status(500).json({error: "Internal Server Error"});
   }
 })
-// app.post("/curr_weather", async (req, res) => {
-//   const {lat, lon} = req.body;
 
-//   try {
-//     const apiURL = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${APIkey}`
+app.post("/register", (req, res) => {
+  const userModel = require ("./models/user.js");
+  userModel.create(req.body)
+  .then(user => {
+    res.json(user)
+  })
+  .catch(err => {
+    res.json(err)
+  })
+})
 
-//     const apiResponse = await axios.get(apiURL);
+app.post("/login", (req, res) => {
+  const userModel = require ("./models/user.js");
+  const { email, password } = req.body;
 
-//     res.json(apiResponse.data);
-//   } catch (error) {
-//     console.error("Error Fetching Weather Details:", error);
-//     res.status(500).json({error: "Internal Server Error"});
-//   }
-// })
+  userModel.findOne({email: email}).then((user) => {
+    console.log(user)
+    if (user) {
+      if (user.password === password) {
+        res.json("Success");
+      } else {
+        res.json("Incorrect Password")
+      }
+    } else {
+      res.json("No Existing Record")
+    }
+  })
+})
 
 const port = process.env.PORT || 8080;
 

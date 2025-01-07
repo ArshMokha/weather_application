@@ -22,6 +22,10 @@ async function fetchPOST(url, formData) {
   }
 }
 
+function getCurrentLocation() {
+  
+}
+
 function SearchBar({setWeatherData}) {
   const [city, setCity] = useState("");
   const [locations, setLocations] = useState([]);
