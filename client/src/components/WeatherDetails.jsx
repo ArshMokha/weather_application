@@ -1,11 +1,19 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "../styles/WeatherDetails.css";
-import lightRain from '../assets/rain_icon.png'
 
 function WeatherDetails({ weatherData }) {
+  const [icon, setIcon] = useState("");
+
+  useEffect(() => {
+    if (weatherData) {
+      const iconCode = weatherData.weather[0].icon;
+      setIcon(iconCode);
+    }
+  }, [weatherData]);
+
   function getTime() {
     let date = new Date();
-    return `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`
+    return `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
   }
 
   const handleFavClick = async (event) => {
@@ -23,16 +31,18 @@ function WeatherDetails({ weatherData }) {
         "authorization": localStorage.getItem("token")
       },
       body: JSON.stringify(data)
-    }) 
+    });
+  };
 
-    
-  }
+  const getIconImage = (iconCode) => {
+    return `/icons/${iconCode}.png`; 
+  };
 
   return (
     <>
       <div className="wd-container">
         <div className="icon-container">
-          <img src={lightRain} />
+          <img src={icon ? getIconImage(icon) : ""} alt="Weather Icon" />
         </div>
         <div className="details-container">
           <p>{weatherData ? `${weatherData.main.temp} ºC` : ""}</p>
@@ -49,7 +59,7 @@ function WeatherDetails({ weatherData }) {
         </div>
       </div>
     </>
-  )
+  );
 }
 
 export default WeatherDetails;

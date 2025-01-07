@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "../styles/SearchBar.css";
 
 async function fetchPOST(url, formData) {
@@ -23,12 +23,18 @@ async function fetchPOST(url, formData) {
 }
 
 function getCurrentLocation() {
-  
+
 }
 
-function SearchBar({setWeatherData}) {
+function SearchBar({ setWeatherData }) {
   const [city, setCity] = useState("");
   const [locations, setLocations] = useState([]);
+
+  useEffect(() => {
+    if (city.length === 0) {
+      showcaseFavourites();
+    }
+  }, [city]);
 
   const geoLocateCity = async (event) => {
     event.preventDefault();
@@ -59,17 +65,17 @@ function SearchBar({setWeatherData}) {
     setLocations([]);
 
     try {
-    const rawResponse = await fetch("http://localhost:8080/favourites/get", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        "authorization": localStorage.getItem("token")
-      }
-    });
+      const rawResponse = await fetch("http://localhost:8080/favourites/get", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "authorization": localStorage.getItem("token")
+        }
+      });
 
-    const response = await rawResponse.json();
+      const response = await rawResponse.json();
 
-    setLocations(response);
+      setLocations(response);
     } catch (err) {
       console.log("Something went wrong:", err);
     }
@@ -86,12 +92,18 @@ function SearchBar({setWeatherData}) {
             onChange={(e) => {
               setCity(e.target.value);
               setLocations([]);
-              if (city.length === 0) {
-                showcaseFavourites();
-              }
             }} />
           <button type="submit">Submit</button>
         </form>
+
+        {city.length === 0 && locations.length > 0 && (
+          <h3>Favourites</h3>
+        )}
+
+        {city.length > 0 && locations.length > 0 && (
+          <h3>Suggested</h3>
+        )}
+
         <div className="locations-container">
           {locations.map((location, index) => (
             <div key={index}>
