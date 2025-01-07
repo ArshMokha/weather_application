@@ -20,14 +20,14 @@ function Login() {
 
       const response = await response.json();
 
-      if (res.message === "Success") {
-        localStorage.setItem("token", res.token);
+      if (response.message === "Success") {
+        localStorage.setItem("token", response.token);
         navigate("/home");
       } else {
-        console.log("No Success");
+        console.log(response.message);
       }
     } catch (err) {
-      console.err("Error Fetching Data:", err)
+      console.log("Error Fetching Data:", err)
     }
   }
 
@@ -40,6 +40,9 @@ function Login() {
           <input type="password" name="password" placeholder="Enter Password" onChange={(e) => setPassword(e.target.value)} />
           <button type="submit">Login</button>
         </form>
+        <Link to="/register">
+          <button>Register</button>
+        </Link>
       </div>
     </>
   )

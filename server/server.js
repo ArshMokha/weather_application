@@ -2,6 +2,7 @@ const express = require ("express");
 const axios = require ("axios");
 const mongoose = require ("mongoose");
 const cors = require ("cors");
+const jwt = require ("jsonwebtoken");
 require('dotenv').config();
 
 const app = express();
@@ -80,11 +81,10 @@ app.post("/login", (req, res) => {
   const { email, password } = req.body;
 
   userModel.findOne({email: email}).then((user) => {
-    console.log(user)
     if (user) {
       if (user.password === password) {
         const token = jwt.sign({userId: user.id}, process.env.JWT_SECRET, {expiresIn: "3h"})
-        res.json({message: "Success", token});
+        res.status(200).json({message: "Success", token});
       } else {
         res.status(401).json({message: "Incorrect Password"});
       }
@@ -96,11 +96,11 @@ app.post("/login", (req, res) => {
   })
 })
 
-app.post("/favourite", authMiddleware, (req, res) => {
-  const userModel = require("./models/user.js");
-  const { location } = req.body;
+// app.post("/favourite", authMiddleware, (req, res) => {
+//   const userModel = require("./models/user.js");
+//   const { location } = req.body;
 
-})
+// })
 
 const port = process.env.PORT || 8080;
 
