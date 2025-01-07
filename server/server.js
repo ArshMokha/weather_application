@@ -60,6 +60,21 @@ app.post("/register", (req, res) => {
   })
 })
 
+const authMiddleware = (req, res, next) => {
+  const token = req.headers.authorization?.split(" ")[1];
+  if (!token) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+
+  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+    if (err) {
+      return res.status(403).json({ message: "Forbidden" });
+    }
+    req.userId = decoded.userId;
+    next();
+  });
+};
+
 app.post("/login", (req, res) => {
   const userModel = require ("./models/user.js");
   const { email, password } = req.body;
@@ -68,14 +83,23 @@ app.post("/login", (req, res) => {
     console.log(user)
     if (user) {
       if (user.password === password) {
-        res.json("Success");
+        const token = jwt.sign({userId: user.id}, process.env.JWT_SECRET, {expiresIn: "3h"})
+        res.json({message: "Success", token});
       } else {
-        res.json("Incorrect Password")
+        res.status(401).json({message: "Incorrect Password"});
       }
     } else {
-      res.json("No Existing Record")
+      res.status(404).json({message: "No Existing Record"});
     }
+  }).catch((err) => {
+    res.status(500).json({message: "Internal Server Error"});
   })
+})
+
+app.post("/favourite", authMiddleware, (req, res) => {
+  const userModel = require("./models/user.js");
+  const { location } = req.body;
+
 })
 
 const port = process.env.PORT || 8080;

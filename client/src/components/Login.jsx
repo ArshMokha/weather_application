@@ -6,25 +6,29 @@ function Login() {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
-    fetch("http://localhost:8080/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({email, password})
-    }).then(async (response) => {
-      const res = await response.json();
-      if (res === "Success") {
+    try {
+      const rawResponse = await fetch("http://localhost:8080/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password })
+      })
+
+      const response = await response.json();
+
+      if (res.message === "Success") {
+        localStorage.setItem("token", res.token);
         navigate("/home");
       } else {
-        
+        console.log("No Success");
       }
-    }).catch((err) => {
-      console.error("Error fetching data:", err);
-    })
+    } catch (err) {
+      console.err("Error Fetching Data:", err)
+    }
   }
 
   return (
