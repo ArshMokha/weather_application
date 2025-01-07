@@ -55,6 +55,26 @@ function SearchBar({setWeatherData}) {
     }
   }
 
+  async function showcaseFavourites() {
+    setLocations([]);
+
+    try {
+    const rawResponse = await fetch("http://localhost:8080/favourites/get", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "authorization": localStorage.getItem("token")
+      }
+    });
+
+    const response = await rawResponse.json();
+
+    setLocations(response);
+    } catch (err) {
+      console.log("Something went wrong:", err);
+    }
+  }
+
   return (
     <>
       <div className="search-container">
@@ -66,6 +86,9 @@ function SearchBar({setWeatherData}) {
             onChange={(e) => {
               setCity(e.target.value);
               setLocations([]);
+              if (city.length === 0) {
+                showcaseFavourites();
+              }
             }} />
           <button type="submit">Submit</button>
         </form>

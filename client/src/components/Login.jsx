@@ -18,7 +18,7 @@ function Login() {
         body: JSON.stringify({ email, password })
       })
 
-      const response = await response.json();
+      const response = await rawResponse.json();
 
       if (response.message === "Success") {
         localStorage.setItem("token", response.token);

@@ -8,6 +8,26 @@ function WeatherDetails({ weatherData }) {
     return `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`
   }
 
+  const handleFavClick = async (event) => {
+    const data = {
+      lat: weatherData.coord.lat,
+      lon: weatherData.coord.lon,
+      name: weatherData.name,
+      country: weatherData.sys.country
+    }
+
+    const rawResponse = await fetch("http://localhost:8080/favourite", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "authorization": localStorage.getItem("token")
+      },
+      body: JSON.stringify(data)
+    }) 
+
+    
+  }
+
   return (
     <>
       <div className="wd-container">
@@ -24,6 +44,7 @@ function WeatherDetails({ weatherData }) {
             <p>{weatherData ? `${weatherData.weather[0].main}` : ""}</p>
             <p>{weatherData ? `Humidity: ${weatherData.main.humidity}%` : ""}</p>
             <p>{weatherData ? `Wind: ${weatherData.wind.speed} km/hr` : ""}</p>
+            <button onClick={handleFavClick}>Favourite</button>
           </div>
         </div>
       </div>
