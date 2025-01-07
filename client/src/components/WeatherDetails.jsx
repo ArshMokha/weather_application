@@ -1,15 +1,7 @@
 import { useState, useEffect } from "react";
 import "../styles/WeatherDetails.css";
 
-function WeatherDetails({ weatherData }) {
-  const [icon, setIcon] = useState("");
-
-  useEffect(() => {
-    if (weatherData) {
-      const iconCode = weatherData.weather[0].icon;
-      setIcon(iconCode);
-    }
-  }, [weatherData]);
+function WeatherDetails({ weatherData, icon }) {
 
   function getTime() {
     let date = new Date();

@@ -10,5 +10,4 @@ html, body, * {
   object-fit: cover;
   display: grid;
   grid-template-columns: 1fr 20%;
-  background: url("../assets/background.jpg");
 }
