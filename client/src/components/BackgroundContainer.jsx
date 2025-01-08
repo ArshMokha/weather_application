@@ -5,7 +5,7 @@ import WeatherDetails from "./WeatherDetails.jsx";
 
 function BackgroundContainer() {
   const [weatherData, setWeatherData] = useState(null);
-  const [icon, setIcon] = useState("");
+  const [icon, setIcon] = useState(null);
 
   useEffect(() => {
     if (weatherData) {
@@ -14,12 +14,17 @@ function BackgroundContainer() {
     }
   }, [weatherData]);
 
+  const getImagePath = (icon) => {
+    return `/images/${icon}.jpg`;
+  }
   
 
   return (
     <>
       <div className="background-container" style={{
-        background: url(icon ? `/images/${icon}.jpg` : "")
+        backgroundImage: `url(${icon ? getImagePath(icon) : ""})`,
+        backgroundSize: "cover",
+        backgroundRepeat: "no-repeat"
       }}>
         <WeatherDetails weatherData={weatherData} icon={icon} />
         <SearchBar setWeatherData={setWeatherData} />
