@@ -56,6 +56,8 @@ function SearchBar({ setWeatherData }) {
         lon: location.lon
       }
 
+      console.log(location);
+
       const response = await fetchPOST("http://localhost:8080/curr_weather", obj);
       setWeatherData(response);
     }

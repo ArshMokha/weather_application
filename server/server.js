@@ -3,6 +3,7 @@ const axios = require("axios");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
+const FormData = require('form-data');
 require('dotenv').config();
 
 const app = express();
@@ -26,7 +27,7 @@ app.post("/geolocation", async (req, res) => {
     if (!apiResponse.data || apiResponse.data.length === 0) {
       return res.status(404).json({ error: "Location Not Found" });
     }
-
+    
     res.json(apiResponse.data);
   } catch (error) {
     res.status(500).json({ error: "Internal Server Error" });
@@ -109,18 +110,14 @@ app.post("/favourite", authMiddleware, async (req, res) => {
       return res.status(404).json("User Not Found");
     }
 
-    console.log(user.name);
-
     const isClose = (a, b, tolerance = 0.0001) => Math.abs(a - b) < tolerance;
 
     const favouriteCheck = user.favourites.some((favourite) => {
       return (favourite.lat, lat &&
-      favourite.lon, lon &&
-      favourite.name === name &&
-      favourite.country === country)
+        favourite.lon, lon &&
+        favourite.name === name &&
+        favourite.country === country)
     })
-
-    console.log(favouriteCheck);
 
     if (favouriteCheck) {
       await userModel.findByIdAndUpdate(req.userId, {
@@ -161,6 +158,40 @@ app.get("/favourites/get", authMiddleware, async (req, res) => {
     res.status(500).json("Internal Server Error");
   }
 })
+
+app.post("/sdapi", async (req, res) => {
+  const { weather } = req.body;
+
+  try {
+    const payload = {
+      prompt: `It is beautiful ${weather} day or night`,
+      output_format: "png"
+    };
+
+    const response = await axios.post(
+      process.env.STABILITY_API_URL,
+      axios.toFormData(payload, new FormData()),
+      {
+        headers: {
+          authorization: `Bearer ${process.env.STABILITY_API_KEY}`,
+          accept: "application/json"
+        }
+      }
+    );
+
+    // Directly using the Base64 image from the response
+    if (response.status === 200 && response.data && response.data.image) {
+      res.json({ image: response.data.image });
+    } else {
+      // Handle error response if the image is not returned as expected
+      throw new Error(`Failed to retrieve image: ${JSON.stringify(response.data)}`);
+    }
+  } catch (error) {
+    console.error("Error generating image:", error);
+    res.status(500).json({ error: "Error generating image" });
+  }
+});
+
 
 const port = process.env.PORT || 8080;
 

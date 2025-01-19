@@ -18,7 +18,7 @@ function Signup() {
       body: JSON.stringify({name, email, password})
     }).then((response) => {
       console.log(response);
-      navigate("/login");
+      navigate("/");
     }).catch((err) => {
       console.error("Error fetching data:", err);
     })
