@@ -1,0 +1,27 @@
+.navbar {
+ display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-block: 1.5rem;
+}
+
+.nav-menu {
+  @media (width < 40em) {
+    position: fixed;
+    inset: 0;
+    padding: 1rem;
+  }
+}
+
+.nav-links {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.nav-item {
+  list-style-type: none;
+}
+
